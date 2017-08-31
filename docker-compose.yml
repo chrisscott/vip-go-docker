@@ -1,0 +1,57 @@
+version: '2'
+services:
+    php:
+        build: .
+        links:
+            - mysql
+            - memcached
+        volumes:
+            - "./wp-config:/var/www/html/wp-config:ro"
+            - "./wp-content/mu-plugins:/var/www/html/wp-content/mu-plugins:ro"
+            - "./wp-content/plugins:/var/www/html/wp-content/plugins:ro"
+            - "./wp-content/themes:/var/www/html/wp-content/themes:ro"
+            - "./wp-content/uploads:/var/www/html/wp-content/uploads"
+        environment:
+            WORDPRESS_DB_HOST: mysql:3306
+            WORDPRESS_DB_PASSWORD: wordpress
+            WORDPRESS_DB_NAME: wordpress
+            WORDPRESS_DB_USER: wordpress
+
+    wpcli:
+        build: .
+        command: /usr/local/bin/wp --allow-root
+        links:
+            - mysql
+            - memcached
+        volumes_from:
+            - php:ro
+        environment:
+            WORDPRESS_DB_HOST: mysql:3306
+            WORDPRESS_DB_PASSWORD: wordpress
+            WORDPRESS_DB_NAME: wordpress
+            WORDPRESS_DB_USER: wordpress
+
+    nginx:
+        image: nginx:mainline
+        volumes:
+            - ".docker/nginx.template:/etc/nginx/conf.d/wordpress.template:ro"
+        volumes_from:
+            - php:ro
+        links:
+            - php
+        ports:
+            - "8000:80"
+        command: /bin/bash -c "envsubst '$$NGINX_PORT' < /etc/nginx/conf.d/wordpress.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+        environment:
+            NGINX_PORT: 80
+
+    mysql:
+        image: mariadb
+        environment:
+            MYSQL_ROOT_PASSWORD: wordpress
+            MYSQL_DATABASE: wordpress
+            MYSQL_USER: wordpress
+            MYSQL_PASSWORD: wordpress
+
+    memcached:
+        image: memcached

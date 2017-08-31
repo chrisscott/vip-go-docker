@@ -1,0 +1,4 @@
+#!/bin/bash
+
+docker-compose -f $DIR/docker-compose.yml build --pull
+docker-compose -f $DIR/docker-compose.yml stop php && docker-compose -f $DIR/docker-compose.yml rm -v --force php wpcli

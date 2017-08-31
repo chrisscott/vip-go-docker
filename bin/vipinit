@@ -1,0 +1,23 @@
+#!/bin/bash
+
+DIR=$(cd `dirname $0` && cd .. && pwd)
+
+read -p "Enter the SSH URL to your site's Github repo: (e.g. git@github.com:wpcomvip/YOUR_REPO.git): " REPO_URL
+if [[ -z "$REPO_URL" ]]; then
+	echo "Repo URL is required."
+	exit 1
+fi
+
+cd $DIR
+git init wp-content
+cd wp-content
+echo "Adding remote for $REPO_URL"
+if ! git remote add -f origin $REPO_URL; then
+	exit 1
+fi
+
+git reset origin/master
+git reset --hard HEAD
+git clone git@github.com:Automattic/vip-go-mu-plugins.git --recursive mu-plugins
+git clone https://github.com/tollmanz/wordpress-pecl-memcached-object-cache.git mu-plugins/wordpress-pecl-memcached-object-cache
+cd -

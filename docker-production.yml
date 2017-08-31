@@ -1,0 +1,17 @@
+version: '2'
+services:
+    php:
+        restart: always
+        environment:
+            WP_PRODUCTION: 'true'
+
+    nginx:
+        restart: always
+
+    mysql:
+        restart: always
+        volumes:
+            - ".data:/var/lib/mysql"
+
+    memcached:
+        restart: always
