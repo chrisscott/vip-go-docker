@@ -21,3 +21,9 @@ git reset --hard HEAD
 git clone git@github.com:Automattic/vip-go-mu-plugins.git --recursive mu-plugins
 git clone https://github.com/tollmanz/wordpress-pecl-memcached-object-cache.git mu-plugins/wordpress-pecl-memcached-object-cache
 cd -
+
+echo "Installation is complete! Stopping all containers..."
+
+docker-compose stop
+
+echo "To run this site, use './bin/up'. See the README for details."
