@@ -25,11 +25,13 @@ git clone https://github.com/chrisscott/vip-go-docker.git . && rm -rf .git
 ```
 This will add the files from this repo that are used in the following steps.
 
-Make sure Docker is running then:
+NOTE: If you want to run nginx on a different port than 8000 set the `PORT` environment variable before continuing. e.g. `export PORT=80` for a publicly accessible installation.
+
+**Make sure Docker is running** then:
 ```
 ./bin/init
 ```
-This will set up the Docker containers and run `docker-compose up` to bring them to life.
+This will set up the Docker containers and run `docker-compose up -d` to bring them to life.
 Once that completes, go to `http://localhost:8000/` to install WordPress. You do not need to log in as you'll do that after the next step.
 
 After you have installed WordPress, run:
@@ -44,13 +46,42 @@ Log into WordPress and you should have a nice, shiny VIP Go compatible installat
 
 After following the installation instructions above you can use `docker-compose` to run the site:
 
-* `docker-compose start` will start all containers in the background
-* `docker-compose up` will start all containers in the foreground and output all container output (Ctrl+C to stop the containers)
-* `docker-compose stop` will stop all containers running in the background
-* `docker-compose logs [container]` will show the latest output from `[container]` (see container names above)
+* `docker-compose up` will _create_ and start all containers in the foreground and output all container output (Ctrl+C to stop the containers). Use the `-d` flag to run in the background.
+* `docker-compose start` will start all containers.
+* `docker-compose stop` will stop all containers running in the background.
+* `docker-compose logs [container]` will show the latest output from `[container]` (see container names above).
+
+## Using in Production
+
+### Setting the Port nginx Listens On
+By default, nginx will listen on port 8000. To have it listen on an alternate port (e.g. 80), set the `PORT` environment variable:
+```
+export PORT=80
+```
+
+### Using the Production Compose File
+
+Pass in the production compose file to use settings that are better suited to production environments:
+```
+export PORT=80; docker-compose up -d -f docker-compose.yml -f docker-production.yml
+```
 
 ### WP-CLI
 To run `wp` use `./bin/wp` and pass in any arguments you normally would. e.g. `./bin/wp --allow-root shell`
+
+## Installation on Amazon Linux
+If you are using EC2 or Lightsail with the Amazon Linux OS:
+
+* Install git and Docker:
+```
+sudo yum update -y
+sudo yum install -y docker
+sudo service docker start
+sudo usermod -a -G docker ec2-user
+```
+* Log out and log back in to pick up the group added above
+* Follow the [instructions](https://docs.docker.com/compose/install/#install-compose) to install `docker-compose`
+* Follow the installation instructions above.
 
 ## Upgrade WordPress
 
