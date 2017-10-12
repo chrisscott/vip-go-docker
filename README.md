@@ -21,7 +21,7 @@ These can be installed using your system's native package manager or from binari
 ## Installation
 In the directory you'd like to be the root of your site:
 ```
-git clone git@github.com:chrisscott/vip-go-docker.git . && rm -rf .git
+git clone https://github.com/chrisscott/vip-go-docker.git . && rm -rf .git
 ```
 This will add the files from this repo that are used in the following steps.
 
