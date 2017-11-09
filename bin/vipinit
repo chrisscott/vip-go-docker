@@ -11,8 +11,14 @@ fi
 cd $DIR
 git init wp-content
 cd wp-content
+echo "Cloning $REPO_URL into wp-content"
+if ! git clone $REPO_URL .; then
+	exit 1
+fi
+
 echo "Adding remote for $REPO_URL"
 if ! git remote add -f origin $REPO_URL; then
+	git remote remove origin
 	exit 1
 fi
 
@@ -26,4 +32,4 @@ echo "Installation is complete! Stopping all containers..."
 
 docker-compose stop
 
-echo "To run this site, use './bin/up'. See the README for details."
+echo "To run this site, use './bin/up' (or './bin/up prod' for production environments). See the README for details."
